@@ -16,7 +16,7 @@ from PyQt5.QtGui import QPixmap, QFont, QIcon
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaPlaylist, QMediaContent
 
 
-DEBUG = True
+DEBUG = False
 DEBUG_COLOR = True
 
 
