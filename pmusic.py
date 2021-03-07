@@ -94,7 +94,7 @@ class PButtonBar(QWidget):
         super().__init__(parent)
 
         # set relative height
-        self.resize(parent.width(), parent.height() * 0.19)
+        self.resize(parent.width(), int(parent.height() * 0.19))
 
         layout = QHBoxLayout()
         layout.setSpacing(0)
@@ -178,7 +178,7 @@ class PMusic(QWidget):
         self.quitbutton.setFont(QFont('webdings', 10))
         self.quitbutton.setText('r')                                # cross
         # position: top right corner
-        quitbutton_size = self.width() * 0.2
+        quitbutton_size = int(self.width() * 0.2)
         self.quitbutton.setGeometry(self.width() - quitbutton_size, 0, quitbutton_size, quitbutton_size)
         self.quitbutton.clicked.connect(self.onclick_quit)
 
@@ -382,7 +382,7 @@ if __name__ == '__main__':
     screen_ = app_.primaryScreen()
     size_ = screen_.size()
     debug('screen size == {}'.format(size_))
-    app_size_ = min(size_.width(), size_.height()) / 12
+    app_size_ = int(min(size_.width(), size_.height()) / 12)
 
     main_window_ = PMusicWindow(app_size_, app_size_)
     sys.exit(app_.exec_())
