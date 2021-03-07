@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=pMusic
+Comment=pMusic Player
+Exec=/usr/bin/pmusic
+Icon=/usr/share/pmusic/pMusicIcon.png
+Terminal=false

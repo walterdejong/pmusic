@@ -58,7 +58,10 @@ class PImage(QLabel):
 
         if pixmap is not None:
             img_width, img_height = pixmap.size().width(), pixmap.size().height()
-            self.aspect_ratio = img_width / img_height
+            try:
+                self.aspect_ratio = img_width / img_height
+            except ZeroDivisionError:
+                self.aspect_ratio = 1.0
         else:
             self.aspect_ratio = 0.0
         debug('img aspect ratio == {}'.format(self.aspect_ratio))
@@ -77,7 +80,7 @@ class PImage(QLabel):
         debug('resizeEvent: {}x{}'.format(self.width(), self.height()))
 
         l = min(self.width(), self.height())
-        self.resize(l, l * self.aspect_ratio)
+        self.resize(l, int(l * self.aspect_ratio))
 
 
 
@@ -141,7 +144,7 @@ class PButtonBar(QWidget):
 class PMusic(QWidget):
     '''central widget'''
 
-    DEFAULT_IMG = 'appImage.png'
+    DEFAULT_IMG = '/usr/share/pmusic/pMusic.png'
 
     def __init__(self, parent):
         '''initialize instance'''
@@ -340,13 +343,16 @@ class PMusic(QWidget):
 class PMusicWindow(QMainWindow):
     '''main window'''
 
+    APP_TITLE = 'pMusic'
+    APP_ICON = '/usr/share/pmusic/pMusicIcon.png'
+
     def __init__(self, width, height):
         '''initialize instance'''
 
         super().__init__()
 
-        self.setWindowTitle('pMusic')
-        self.setWindowIcon(QIcon('appIcon.png'))
+        self.setWindowTitle(PMusicWindow.APP_TITLE)
+        self.setWindowIcon(QIcon(PMusicWindow.APP_ICON))
 
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
 
