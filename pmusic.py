@@ -430,6 +430,9 @@ class PMusicWindow(QMainWindow):
 
 
 if __name__ == '__main__':
+    if len(sys.argv) > 1 and sys.argv[1] == '--debug':
+        DEBUG = True
+
     app_ = QApplication(sys.argv)
 
     # app window size is relative to display size
