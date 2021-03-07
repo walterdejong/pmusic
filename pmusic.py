@@ -334,9 +334,7 @@ class PMusic(QWidget):
 class PMusicWindow(QMainWindow):
     '''main window'''
 
-    WINDOW_SIZE = (150, 150)
-
-    def __init__(self):
+    def __init__(self, width, height):
         '''initialize instance'''
 
         super().__init__()
@@ -346,7 +344,7 @@ class PMusicWindow(QMainWindow):
 
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
 
-        self.setFixedSize(PMusicWindow.WINDOW_SIZE[0], PMusicWindow.WINDOW_SIZE[1])
+        self.setFixedSize(width, height)
         self.setCentralWidget(PMusic(self))
 
         self.old_pos = self.pos()
@@ -373,7 +371,14 @@ class PMusicWindow(QMainWindow):
 
 if __name__ == '__main__':
     app_ = QApplication(sys.argv)
-    main_window_ = PMusicWindow()
+
+    # app window size is relative to display size
+    screen_ = app_.primaryScreen()
+    size_ = screen_.size()
+    debug('screen size == {}'.format(size_))
+    app_size_ = min(size_.width(), size_.height()) / 12
+
+    main_window_ = PMusicWindow(app_size_, app_size_)
     sys.exit(app_.exec_())
 
 
