@@ -9,9 +9,9 @@ import sys
 import os
 import inspect
 
-from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QPoint, QRect, QUrl, QDirIterator
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QGridLayout, QHBoxLayout,
-                             QLabel, QPushButton, QToolButton, QStyle, QFileDialog)
+from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QUrl, QDirIterator
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QHBoxLayout,
+                             QLabel, QPushButton, QToolButton, QFileDialog)
 from PyQt5.QtGui import QPixmap, QFont, QIcon
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaPlaylist, QMediaContent
 
@@ -48,7 +48,7 @@ class PImage(QLabel):
 
         if pixmap is not None:
             self.setPixmap(pixmap)
-        
+
     def setPixmap(self, pixmap):
         '''assign pixmap image'''
 
@@ -93,8 +93,13 @@ class PButtonBar(QWidget):
 
         super().__init__(parent)
 
+        # set relative height
+        self.resize(parent.width(), parent.height() * 0.19)
+
         layout = QHBoxLayout()
+        layout.setSpacing(0)
         layout.addStretch(1)
+        layout.setContentsMargins(0, 0, 0, 0)
 
         self.left_button = QToolButton(self)
         self.left_button.setArrowType(Qt.LeftArrow)
@@ -137,7 +142,6 @@ class PMusic(QWidget):
     '''central widget'''
 
     DEFAULT_IMG = 'appImage.png'
-    QUITBUTTON_SIZE = 24
 
     def __init__(self, parent):
         '''initialize instance'''
@@ -153,6 +157,7 @@ class PMusic(QWidget):
         self.player.setVolume(100)
 
         self.resize(parent.width(), parent.height())
+        self.setContentsMargins(0, 0, 0, 0)
 
         pixmap = QPixmap(PMusic.DEFAULT_IMG)
         self.img_label = PImage(self, pixmap)
@@ -173,7 +178,8 @@ class PMusic(QWidget):
         self.quitbutton.setFont(QFont('webdings', 10))
         self.quitbutton.setText('r')                                # cross
         # position: top right corner
-        self.quitbutton.setGeometry(self.width() - PMusic.QUITBUTTON_SIZE, 0, PMusic.QUITBUTTON_SIZE, PMusic.QUITBUTTON_SIZE)
+        quitbutton_size = self.width() * 0.2
+        self.quitbutton.setGeometry(self.width() - quitbutton_size, 0, quitbutton_size, quitbutton_size)
         self.quitbutton.clicked.connect(self.onclick_quit)
 
         self.show()
@@ -185,7 +191,7 @@ class PMusic(QWidget):
 
         self.buttonbar.show()
         self.quitbutton.show()
-    
+
     def leaveEvent(self, event):
         '''on mouse leave, hide the buttons'''
 
@@ -266,7 +272,7 @@ class PMusic(QWidget):
         if media.isNull():
             debug('media isNull')
             return
-        
+
         filename = media.canonicalUrl().path()
         debug('current media == [{}]'.format(filename))
         folder = os.path.dirname(filename)
