@@ -248,6 +248,7 @@ class PMusic(QWidget):
         self.playlist.previous()
 
         if self.player.state() != QMediaPlayer.PlayingState:
+            debug('player.state == {}'.format(self.player.state()))
             self.play()
 
     @pyqtSlot()
@@ -258,6 +259,7 @@ class PMusic(QWidget):
         self.playlist.next()
 
         if self.player.state() != QMediaPlayer.PlayingState:
+            debug('player.state == {}'.format(self.player.state()))
             self.play()
 
     @pyqtSlot()
@@ -293,6 +295,17 @@ class PMusic(QWidget):
         '''media changed; player switched to next song'''
 
         debug('onmedia_status_changed')
+        debug('player.state == {}'.format(self.player.state()))
+        debug('player.mediastate == {}'.format(self.player.mediaStatus()))
+
+        # we want to load albumart if the song is in another directory
+        # and display filename on stdout or console log
+        # this is only relevant if the QMediaPlayer is now loading new media
+
+        if self.player.mediaStatus() != QMediaPlayer.LoadingMedia:
+            # player is another state, leave it
+            return
+
         media = self.player.currentMedia()
         if media.isNull():
             debug('media isNull')
@@ -300,6 +313,19 @@ class PMusic(QWidget):
 
         filename = media.canonicalUrl().path()
         debug('current media == [{}]'.format(filename))
+
+        # make a short path for informational message
+        short_path = filename
+        try:
+            homedir = os.environ['HOME'] + os.path.sep
+            if short_path.startswith(homedir):
+                short_path = filename[len(homedir):]
+        except KeyError:
+            pass
+        if short_path.startswith('Music/'):
+            short_path = short_path[len('Music/'):]
+        print('now playing: {}'.format(short_path))
+
         folder = os.path.dirname(filename)
         self.load_albumart(folder)
 
