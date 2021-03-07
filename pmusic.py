@@ -7,12 +7,31 @@
 
 import sys
 import os
+import inspect
 
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, Qt, QEvent, QPoint, QRect, QUrl, QDirIterator
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QGridLayout, QHBoxLayout,
                              QLabel, QPushButton, QToolButton, QStyle, QFileDialog)
 from PyQt5.QtGui import QPixmap, QFont, QIcon
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaPlaylist, QMediaContent
+
+
+DEBUG = True
+DEBUG_COLOR = True
+
+
+def debug(msg: str) -> None:
+    '''print debug message (if in debug mode)'''
+
+    if not DEBUG:
+        return
+
+    funcname = inspect.stack()[1][3]
+
+    if DEBUG_COLOR:
+        print('\x1b[32m% {}():\x1b[0m {}'.format(funcname, msg))
+    else:
+        print('% {}(): {}'.format(funcname, msg))
 
 
 class PImage(QLabel):
@@ -42,7 +61,7 @@ class PImage(QLabel):
             self.aspect_ratio = img_width / img_height
         else:
             self.aspect_ratio = 0.0
-        print('TD img aspect ratio == {}'.format(self.aspect_ratio))
+        debug('img aspect ratio == {}'.format(self.aspect_ratio))
 
     def mousePressEvent(self, event):
         '''onclick event'''
@@ -55,7 +74,7 @@ class PImage(QLabel):
 
         super().resizeEvent(event)
 
-        print('TD resizeEvent: {}x{}'.format(self.width(), self.height()))
+        debug('resizeEvent: {}x{}'.format(self.width(), self.height()))
 
         l = min(self.width(), self.height())
         self.resize(l, l * self.aspect_ratio)
@@ -179,7 +198,7 @@ class PMusic(QWidget):
     def onclick_quit(self):
         '''quit button was clicked'''
 
-        print('TD quit')
+        debug('quit')
         self.stop()
         self.parent().close()
 
@@ -187,14 +206,14 @@ class PMusic(QWidget):
     def onclick_img_label(self):
         '''image label was clicked'''
 
-        print('TD onclick_img_label')
+        debug('onclick_img_label')
         self.pause()
 
     @pyqtSlot()
     def onclick_prev(self):
         '''back button was pressed'''
 
-        print('TD onclick_prev')
+        debug('onclick_prev')
         self.playlist.previous()
 
         if self.player.state() != QMediaPlayer.PlayingState:
@@ -204,7 +223,7 @@ class PMusic(QWidget):
     def onclick_next(self):
         '''next button was pressed'''
 
-        print('TD onclick_next')
+        debug('onclick_next')
         self.playlist.next()
 
         if self.player.state() != QMediaPlayer.PlayingState:
@@ -214,7 +233,7 @@ class PMusic(QWidget):
     def onclick_main(self):
         '''main button was pressed'''
 
-        print('TD onclick_main')
+        debug('onclick_main')
 
         # bring up directory selection dialog
         # have a preference for $HOME/Music/
@@ -229,7 +248,7 @@ class PMusic(QWidget):
             music_dir = os.path.curdir
 
         path = QFileDialog.getExistingDirectory(self, 'Select directory', music_dir, QFileDialog.ShowDirsOnly)
-        print('TD path == [{}]'.format(path))
+        debug('path == [{}]'.format(path))
         if not path:
             # cancel
             return
@@ -242,45 +261,45 @@ class PMusic(QWidget):
     def onmedia_status_changed(self):
         '''media changed; player switched to next song'''
 
-        print('TD onmedia_status_changed')
+        debug('onmedia_status_changed')
         media = self.player.currentMedia()
         if media.isNull():
-            print('TD media isNull')
+            debug('media isNull')
             return
         
         filename = media.canonicalUrl().path()
-        print('TD current media == [{}]'.format(filename))
+        debug('current media == [{}]'.format(filename))
         folder = os.path.dirname(filename)
         self.load_albumart(folder)
 
     def load_playlist(self, path):
         '''load new playlist'''
 
-        print('TD load playlist')
+        debug('load playlist')
         self.playlist.clear()
 
         # Note: not actually sure these formats are all supported ...
         files = QDirIterator(path, ['*.mp3', '*.ogg', '*.wav', '*.flac'], flags=QDirIterator.Subdirectories)
         while files.hasNext():
             filename = files.next()
-            print('TD + {}'.format(filename))
+            debug('+ {}'.format(filename))
 
             url = QUrl.fromLocalFile(filename)
             if not self.playlist.addMedia(QMediaContent(url)):
-                print('TD addMedia() => False')
+                debug('addMedia() => False')
 
         self.player.setPlaylist(self.playlist)
 
     def load_albumart(self, path):
         '''load album art'''
 
-        print('TD load album art')
+        debug('load album art')
         # load album art
         for name in ('cover.jpg', 'Folder.jpg', 'folder.jpg', 'cover.png', 'AlbumArt.jpg', 'AlbumArtSmall.jpg'):
             filename = os.path.join(path, name)
             if os.path.isfile(filename):
                 if filename == self.current_albumart:
-                    print('TD same albumart, already loaded')
+                    debug('same albumart, already loaded')
                     break
 
                 pixmap = QPixmap(filename)
@@ -291,21 +310,20 @@ class PMusic(QWidget):
     def stop(self):
         '''stop playing'''
 
-        print('TD stop')
+        debug('stop')
         self.player.stop()
 
     def play(self):
         '''start playing'''
 
-        print('TD play()')
+        debug('play()')
         self.player.play()
-        print('TD hoor je al wat??')
 
     def pause(self):
         '''pause playing'''
 
         if self.player.state() == QMediaPlayer.PlayingState:
-            print('TD pause')
+            debug('pause')
             self.player.pause()
 
         elif self.player.state() in (QMediaPlayer.StoppedState, QMediaPlayer.PausedState):
