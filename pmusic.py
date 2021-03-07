@@ -175,14 +175,23 @@ class PMusic(QWidget):
         self.buttonbar.clicked_mid.connect(self.onclick_main)
         self.buttonbar.clicked_right.connect(self.onclick_next)
 
+        # toggle button for shuffle
+        self.shufflebutton = QPushButton(self)
+        self.shufflebutton.hide()
+        self.shufflebutton.setCheckable(True)
+        self.shufflebutton.setText('S')
+        # position: top left corner
+        button_size = int(self.width() * 0.2)
+        self.shufflebutton.setGeometry(0, 0, button_size, button_size)
+        self.shufflebutton.clicked.connect(self.onclick_shuffle)
+
         self.quitbutton = QPushButton(self)
         self.quitbutton.hide()
         self.quitbutton.setStyleSheet('color: rgb(240, 0, 0)')      # red
         self.quitbutton.setFont(QFont('webdings', 10))
         self.quitbutton.setText('r')                                # cross
         # position: top right corner
-        quitbutton_size = int(self.width() * 0.2)
-        self.quitbutton.setGeometry(self.width() - quitbutton_size, 0, quitbutton_size, quitbutton_size)
+        self.quitbutton.setGeometry(self.width() - button_size, 0, button_size, button_size)
         self.quitbutton.clicked.connect(self.onclick_quit)
 
         self.show()
@@ -193,6 +202,7 @@ class PMusic(QWidget):
         super().enterEvent(event)
 
         self.buttonbar.show()
+        self.shufflebutton.show()
         self.quitbutton.show()
 
     def leaveEvent(self, event):
@@ -201,7 +211,19 @@ class PMusic(QWidget):
         super().leaveEvent(event)
 
         self.buttonbar.hide()
+        self.shufflebutton.hide()
         self.quitbutton.hide()
+
+    @pyqtSlot()
+    def onclick_shuffle(self):
+        '''shuffle button was toggled'''
+
+        if self.shufflebutton.isChecked():
+            debug('shuffle: on')
+            self.playlist.setPlaybackMode(QMediaPlaylist.Random)
+        else:
+            debug('shuffle: off')
+            self.playlist.setPlaybackMode(QMediaPlaylist.Loop)
 
     @pyqtSlot()
     def onclick_quit(self):
