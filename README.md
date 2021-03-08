@@ -31,6 +31,7 @@ Hover over the app window to enable the buttons.
 - S button : toggle shuffle
 - X button : quits the app
 
+Playback always loops.
 Clicking the albumart pauses/resumes playback.
 Click and drag the albumart to move the window.
 
