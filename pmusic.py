@@ -308,7 +308,6 @@ class PMusic(QWidget):
 
         self.stop()
         self.load_playlist(path)
-        self.load_albumart(path)
         self.play()
 
     def onmedia_status_changed(self):
@@ -322,32 +321,36 @@ class PMusic(QWidget):
         # and display filename on stdout or console log
         # this is only relevant if the QMediaPlayer is now loading new media
 
-        if self.player.mediaStatus() != QMediaPlayer.LoadingMedia:
-            # player is another state, leave it
-            return
+        if self.player.mediaStatus() == QMediaPlayer.LoadingMedia:
+            media = self.player.currentMedia()
+            if media.isNull():
+                debug('media isNull')
+                return
 
-        media = self.player.currentMedia()
-        if media.isNull():
-            debug('media isNull')
-            return
+            filename = media.canonicalUrl().path()
+            debug('current media == [{}]'.format(filename))
 
-        filename = media.canonicalUrl().path()
-        debug('current media == [{}]'.format(filename))
+            # make a short path for informational message
+            short_path = filename
+            try:
+                homedir = os.environ['HOME'] + os.path.sep
+                if short_path.startswith(homedir):
+                    short_path = filename[len(homedir):]
+            except KeyError:
+                pass
+            if short_path.startswith('Music/'):
+                short_path = short_path[len('Music/'):]
+            print('now playing: {}'.format(short_path))
 
-        # make a short path for informational message
-        short_path = filename
-        try:
-            homedir = os.environ['HOME'] + os.path.sep
-            if short_path.startswith(homedir):
-                short_path = filename[len(homedir):]
-        except KeyError:
-            pass
-        if short_path.startswith('Music/'):
-            short_path = short_path[len('Music/'):]
-        print('now playing: {}'.format(short_path))
+            folder = os.path.dirname(filename)
+            self.load_albumart(folder)
 
-        folder = os.path.dirname(filename)
-        self.load_albumart(folder)
+        elif self.player.mediaStatus() == QMediaPlayer.NoMedia:
+            debug('no media present, change albumart to default image')
+            # change to default image
+            pixmap = QPixmap(PMusic.DEFAULT_IMG)
+            self.img_label.setPixmap(pixmap)
+            self.current_albumart = ''
 
     def load_playlist(self, path):
         '''load new playlist'''
@@ -370,7 +373,8 @@ class PMusic(QWidget):
     def load_albumart(self, path):
         '''load album art'''
 
-        debug('load album art')
+        debug('load albumart, path == {}'.format(path))
+
         # load album art
         found = False
         for name in ('cover.jpg', 'Folder.jpg', 'folder.jpg', 'cover.png', 'AlbumArt.jpg', 'AlbumArtSmall.jpg'):
@@ -381,17 +385,22 @@ class PMusic(QWidget):
                     debug('same albumart, already loaded')
                     break
 
+                debug('loading albumart {}'.format(filename))
                 pixmap = QPixmap(filename)
                 self.img_label.setPixmap(pixmap)
                 self.current_albumart = filename
                 break
 
         if not found:
-            if self.current_albumart != '':
+            if not self.current_albumart:
+                debug('no albumart found, keeping default image')
+            else:
                 # put default image
+                debug('no albumart found, putting default image')
                 pixmap = QPixmap(PMusic.DEFAULT_IMG)
                 self.img_label.setPixmap(pixmap)
                 self.current_albumart = ''
+
 
     def stop(self):
         '''stop playing'''
