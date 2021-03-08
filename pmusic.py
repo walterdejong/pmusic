@@ -175,13 +175,13 @@ class PMusic(QWidget):
         self.player.mediaStatusChanged.connect(self.onmedia_status_changed)
         self.playlist = QMediaPlaylist()
         self.playlist.setPlaybackMode(QMediaPlaylist.Loop)
-        self.current_albumart = ''
 
         self.player.setVolume(100)
 
         self.resize(parent.width(), parent.height())
         self.setContentsMargins(0, 0, 0, 0)
 
+        self.current_albumart = ''
         pixmap = QPixmap(PMusic.DEFAULT_IMG)
         self.img_label = PImage(self, pixmap)
         self.img_label.resize(self.width(), self.height())
@@ -372,9 +372,11 @@ class PMusic(QWidget):
 
         debug('load album art')
         # load album art
+        found = False
         for name in ('cover.jpg', 'Folder.jpg', 'folder.jpg', 'cover.png', 'AlbumArt.jpg', 'AlbumArtSmall.jpg'):
             filename = os.path.join(path, name)
             if os.path.isfile(filename):
+                found = True
                 if filename == self.current_albumart:
                     debug('same albumart, already loaded')
                     break
@@ -383,6 +385,13 @@ class PMusic(QWidget):
                 self.img_label.setPixmap(pixmap)
                 self.current_albumart = filename
                 break
+
+        if not found:
+            if self.current_albumart != '':
+                # put default image
+                pixmap = QPixmap(PMusic.DEFAULT_IMG)
+                self.img_label.setPixmap(pixmap)
+                self.current_albumart = ''
 
     def stop(self):
         '''stop playing'''
