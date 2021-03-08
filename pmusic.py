@@ -439,7 +439,8 @@ if __name__ == '__main__':
     screen_ = app_.primaryScreen()
     size_ = screen_.size()
     debug('screen size == {}'.format(size_))
-    app_size_ = int(min(size_.width(), size_.height()) / 12)
+    APP_DIV_SIZE = 12
+    app_size_ = int(min(size_.width(), size_.height()) / APP_DIV_SIZE)
 
     main_window_ = PMusicWindow(app_size_, app_size_)
     sys.exit(app_.exec_())
