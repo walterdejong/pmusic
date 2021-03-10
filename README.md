@@ -1,7 +1,8 @@
 pMusic
 ======
 
-pMusic is a tiny minimalistic music player.
+pMusic is a tiny minimalistic music player for the Linux desktop
+(although it might work on other platforms, too).
 ASCII art impression of what it looks like:
 
         +----------+
