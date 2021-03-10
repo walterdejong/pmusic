@@ -12,6 +12,8 @@ then
     exit 1
 fi
 
+#apt-get install python3-pyqt5 python3-pyqt5.qtmultimedia
+
 install -o root -g root -m 755 pmusic.py $DESTDIR/bin/pmusic
 install -o root -g root -m 644 -D pMusic.png $DESTDIR/share/pmusic/pMusic.png
 install -o root -g root -m 644 -D pMusicIcon.png $DESTDIR/share/pmusic/pMusicIcon.png
