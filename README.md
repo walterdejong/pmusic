@@ -2,6 +2,14 @@ pMusic
 ======
 
 pMusic is a tiny minimalistic music player.
+ASCII art impression of what it looks like:
+
+        +----------+
+        |          |
+        |          |
+        |          |
+        |          |
+        +----------+
 
 It assumes your music is organized in directories; one album per directory.
 
@@ -24,6 +32,13 @@ It displays albumart images if appropriated named:
 Controls
 --------
 Hover over the app window to enable the buttons.
+
+        +----------+
+        |S        x|
+        |          |
+        |          |
+        | < ==== > |
+        +----------+
 
 - left button : skip to previous track
 - middle button : select directory to play
