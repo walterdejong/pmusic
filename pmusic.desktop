@@ -6,3 +6,4 @@ Comment=pMusic Player
 Exec=/usr/bin/pmusic
 Icon=/usr/share/pmusic/pMusicIcon.png
 Terminal=false
+Categories=GNOME;GTK;AudioVideo;Audio;Player;
